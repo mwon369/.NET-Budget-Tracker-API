@@ -1,3 +1,6 @@
+global using BudgetTrackerAPI.Models;
+global using BudgetTrackerAPI.Enums;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
