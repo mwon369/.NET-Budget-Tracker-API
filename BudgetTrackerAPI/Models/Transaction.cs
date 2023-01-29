@@ -8,6 +8,6 @@ namespace BudgetTrackerAPI.Models
         public decimal Value { get; set; }
         public DateTime Date { get; set; }
         public TransactionType TransactionType { get; set; }
-        public string Details { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 }
