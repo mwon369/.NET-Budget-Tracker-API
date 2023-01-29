@@ -86,7 +86,7 @@ namespace BudgetTrackerAPI.Controllers
         }
 
         [HttpGet("GetAll/FilterByDescription/{description}")]
-        public async Task<ActionResult<List<Transaction>>> GetAllTransactionsWhichContainSpecifiedDescription(string description)
+        public async Task<ActionResult<List<Transaction>>> GetAllTransactionsContainingDescription(string description)
         {
             var transactionsWithDescription = _transactionDummyData.Where(t => t.Description.ToLower().Contains(description.ToLower()));
             return Ok(transactionsWithDescription);
@@ -97,6 +97,35 @@ namespace BudgetTrackerAPI.Controllers
         {
             var transaction = _transactionDummyData.Find(t => t.Id == id);
             return Ok(transaction);
+        }
+
+        [HttpPost("AddTransaction")]
+        public async Task<ActionResult<List<Transaction>>> AddTransaction([FromBody]Transaction transactionToAdd)
+        {
+            _transactionDummyData.Add(transactionToAdd);
+            return Ok(_transactionDummyData);
+        }
+
+        [HttpPut("EditTransaction")]
+        public async Task<ActionResult<List<Transaction>>> EditTransaction([FromBody]Transaction newTransaction)
+        {
+            var transactionToEdit = _transactionDummyData.Find(t => t.Id == newTransaction.Id);
+
+            transactionToEdit.Id = newTransaction.Id;
+            transactionToEdit.Value = newTransaction.Value;
+            transactionToEdit.Date = newTransaction.Date;
+            transactionToEdit.TransactionType = newTransaction.TransactionType;
+            transactionToEdit.Description = newTransaction.Description;
+
+            return Ok(_transactionDummyData);
+        }
+
+        [HttpDelete("DeleteTransaction/{id}")]
+        public async Task<ActionResult<List<Transaction>>> DeleteTransaction(int id)
+        {
+            var transactionToDelete = _transactionDummyData.Find(t => t.Id == id);
+            _transactionDummyData.Remove(transactionToDelete);
+            return Ok(_transactionDummyData);
         }
     }
 }
