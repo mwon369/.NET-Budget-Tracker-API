@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BudgetTrackerAPI.Services.TransactionService;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetTrackerAPI.Controllers
@@ -7,123 +8,82 @@ namespace BudgetTrackerAPI.Controllers
     [ApiController]
     public class TransactionController : ControllerBase
     {
-        private static List<Transaction> _transactionDummyData = new List<Transaction>
+        private readonly ITransactionService _transactionService;
+
+        public TransactionController(ITransactionService transactionService)
         {
-            new Transaction
-            {
-                Id = 1,
-                Value = 32.80m,
-                Date = DateTime.Now,
-                TransactionType = TransactionType.OUTGOING,
-                Description = "Dinner"
-            },
-            new Transaction
-            {
-                Id = 2,
-                Value = 3456.78m,
-                Date = new DateTime(2023, 1, 13, 11, 45, 23),
-                TransactionType = TransactionType.INCOMING,
-                Description = "Got bread"
-            },
-            new Transaction
-            {
-                Id = 3,
-                Value = 15.50m,
-                Date = new DateTime(2023, 1, 18, 13, 32, 48),
-                TransactionType = TransactionType.OUTGOING,
-                Description = "Lunch"
-            },
-        };
+            _transactionService = transactionService;
+        }
 
         [HttpGet("GetAll")]
         public async Task<ActionResult<List<Transaction>>> GetAllTransactions()
         {
-            return Ok(_transactionDummyData);
+            var result = _transactionService.GetAllTransactions();
+            return Ok(result);
         }
 
         [HttpGet("GetAll/FilterByAmount")]
         public async Task<ActionResult<List<Transaction>>> GetAllTransactionsFilteredByAmount(decimal minValue=decimal.MinValue, decimal maxValue=decimal.MaxValue)
         {
-            var transactionsBetweenValues = _transactionDummyData.FindAll(t => t.Value >= minValue && t.Value <= maxValue);
-            return Ok(transactionsBetweenValues);
+            var result = _transactionService.GetAllTransactionsFilteredByAmount(minValue, maxValue);
+            return Ok(result);
         }
 
         [HttpGet("GetAll/FilterByDate")]
         public async Task<ActionResult<List<Transaction>>> GetAllTransactionsFilteredByDate(string startDate="", string endDate="")
         {
-            if (startDate == "" && endDate == "") return BadRequest("Please specify at least either a start date or end date");
-
-            if (startDate == "")
-            {
-                var transactionsBeforeEndDate = _transactionDummyData.FindAll(t => t.Date <= DateTime.Parse(endDate));
-                return Ok(transactionsBeforeEndDate);
-            }
-
-            if (endDate == "")
-            {
-                var transactionsAfterStartDate = _transactionDummyData.FindAll(t => t.Date >= DateTime.Parse(startDate));
-                return Ok(transactionsAfterStartDate);
-            }
-
-            var transactionsBetweenDates = _transactionDummyData.FindAll(t => t.Date >= DateTime.Parse(startDate) && t.Date <= DateTime.Parse(endDate));
-            return Ok(transactionsBetweenDates);
+            var result = _transactionService.GetAllTransactionsFilteredByDate(startDate, endDate);
+            if (result == null) return BadRequest("Please specify at least either a start date or end date");
+            return Ok(result);
         }
 
         [HttpGet("GetAll/FilterIncoming")]
         public async Task<ActionResult<List<Transaction>>> GetAllTransactionsThatAreIncoming()
         {
-            var incomingTransactions = _transactionDummyData.FindAll(t => t.TransactionType == TransactionType.INCOMING);
-            return Ok(incomingTransactions);
+            var result = _transactionService.GetAllTransactionsThatAreIncoming();
+            return Ok(result);
         }
 
         [HttpGet("GetAll/FilterOutgoing")]
         public async Task<ActionResult<List<Transaction>>> GetAllTransactionsThatAreOutgoing()
         {
-            var outgoingTransactions = _transactionDummyData.FindAll(t => t.TransactionType == TransactionType.OUTGOING);
-            return Ok(outgoingTransactions);
+            var result = _transactionService.GetAllTransactionsThatAreOutgoing();
+            return Ok(result);
         }
 
         [HttpGet("GetAll/FilterByDescription/{description}")]
         public async Task<ActionResult<List<Transaction>>> GetAllTransactionsContainingDescription(string description)
         {
-            var transactionsWithDescription = _transactionDummyData.Where(t => t.Description.ToLower().Contains(description.ToLower()));
-            return Ok(transactionsWithDescription);
+            var result = _transactionService.GetAllTransactionsContainingDescription(description);
+            return Ok(result);
         }
 
         [HttpGet("FilterById/{id}")]
         public async Task<ActionResult<Transaction>> GetSingleTransactionById(int id)
         {
-            var transaction = _transactionDummyData.Find(t => t.Id == id);
-            return Ok(transaction);
+            var result = _transactionService.GetSingleTransactionById(id);
+            return Ok(result);
         }
 
         [HttpPost("AddTransaction")]
         public async Task<ActionResult<List<Transaction>>> AddTransaction([FromBody]Transaction transactionToAdd)
         {
-            _transactionDummyData.Add(transactionToAdd);
-            return Ok(_transactionDummyData);
+            var result = _transactionService.AddTransaction(transactionToAdd);
+            return Ok(result);
         }
 
         [HttpPut("EditTransaction")]
         public async Task<ActionResult<List<Transaction>>> EditTransaction([FromBody]Transaction newTransaction)
         {
-            var transactionToEdit = _transactionDummyData.Find(t => t.Id == newTransaction.Id);
-
-            transactionToEdit.Id = newTransaction.Id;
-            transactionToEdit.Value = newTransaction.Value;
-            transactionToEdit.Date = newTransaction.Date;
-            transactionToEdit.TransactionType = newTransaction.TransactionType;
-            transactionToEdit.Description = newTransaction.Description;
-
-            return Ok(_transactionDummyData);
+            var result = _transactionService.EditTransaction(newTransaction);
+            return Ok(result);
         }
 
         [HttpDelete("DeleteTransaction/{id}")]
         public async Task<ActionResult<List<Transaction>>> DeleteTransaction(int id)
         {
-            var transactionToDelete = _transactionDummyData.Find(t => t.Id == id);
-            _transactionDummyData.Remove(transactionToDelete);
-            return Ok(_transactionDummyData);
+            var result = _transactionService.DeleteTransaction(id);
+            return Ok(result);
         }
     }
 }

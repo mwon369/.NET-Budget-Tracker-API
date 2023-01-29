@@ -4,54 +4,113 @@ namespace BudgetTrackerAPI.Services.TransactionService
 {
     public class TransactionService : ITransactionService
     {
-        public Transaction AddTransaction([FromBody] Transaction transactionToAdd)
+        private static List<Transaction> _transactionDummyData = new List<Transaction>
         {
-            throw new NotImplementedException();
+            new Transaction
+            {
+                Id = 1,
+                Value = 32.80m,
+                Date = DateTime.Now,
+                TransactionType = TransactionType.OUTGOING,
+                Description = "Dinner"
+            },
+            new Transaction
+            {
+                Id = 2,
+                Value = 3456.78m,
+                Date = new DateTime(2023, 1, 13, 11, 45, 23),
+                TransactionType = TransactionType.INCOMING,
+                Description = "Got bread"
+            },
+            new Transaction
+            {
+                Id = 3,
+                Value = 15.50m,
+                Date = new DateTime(2023, 1, 18, 13, 32, 48),
+                TransactionType = TransactionType.OUTGOING,
+                Description = "Lunch"
+            },
+        };
+
+        public List<Transaction> AddTransaction(Transaction transactionToAdd)
+        {
+            _transactionDummyData.Add(transactionToAdd);
+            return _transactionDummyData;
         }
 
         public List<Transaction> DeleteTransaction(int id)
         {
-            throw new NotImplementedException();
+            var transactionToDelete = _transactionDummyData.Find(t => t.Id == id);
+            _transactionDummyData.Remove(transactionToDelete);
+            return _transactionDummyData;
         }
 
-        public Transaction EditTransaction([FromBody] Transaction newTransaction)
+        public List<Transaction> EditTransaction(Transaction newTransaction)
         {
-            throw new NotImplementedException();
+            var transactionToEdit = _transactionDummyData.Find(t => t.Id == newTransaction.Id);
+
+            transactionToEdit.Id = newTransaction.Id;
+            transactionToEdit.Value = newTransaction.Value;
+            transactionToEdit.Date = newTransaction.Date;
+            transactionToEdit.TransactionType = newTransaction.TransactionType;
+            transactionToEdit.Description = newTransaction.Description;
+
+            return _transactionDummyData;
         }
 
         public List<Transaction> GetAllTransactions()
         {
-            throw new NotImplementedException();
+            return _transactionDummyData;
         }
 
         public List<Transaction> GetAllTransactionsContainingDescription(string description)
         {
-            throw new NotImplementedException();
+            var transactionsWithDescription = _transactionDummyData.Where(t => t.Description.ToLower().Contains(description.ToLower()));
+            return transactionsWithDescription.ToList();
         }
 
-        public List<Transaction> GetAllTransactionsFilteredByAmount(decimal minValue = decimal.MinValue, decimal maxValue = decimal.MaxValue)
+        public List<Transaction> GetAllTransactionsFilteredByAmount(decimal minValue, decimal maxValue)
         {
-            throw new NotImplementedException();
+            var transactionsBetweenValues = _transactionDummyData.FindAll(t => t.Value >= minValue && t.Value <= maxValue);
+            return transactionsBetweenValues;
         }
 
-        public List<Transaction> GetAllTransactionsFilteredByDate(string startDate = "", string endDate = "")
+        public List<Transaction>? GetAllTransactionsFilteredByDate(string startDate, string endDate)
         {
-            throw new NotImplementedException();
+            if (startDate == "" && endDate == "") return null;
+
+            if (startDate == "")
+            {
+                var transactionsBeforeEndDate = _transactionDummyData.FindAll(t => t.Date <= DateTime.Parse(endDate));
+                return transactionsBeforeEndDate;
+            }
+
+            if (endDate == "")
+            {
+                var transactionsAfterStartDate = _transactionDummyData.FindAll(t => t.Date >= DateTime.Parse(startDate));
+                return transactionsAfterStartDate;
+            }
+
+            var transactionsBetweenDates = _transactionDummyData.FindAll(t => t.Date >= DateTime.Parse(startDate) && t.Date <= DateTime.Parse(endDate));
+            return transactionsBetweenDates;
         }
 
         public List<Transaction> GetAllTransactionsThatAreIncoming()
         {
-            throw new NotImplementedException();
+            var incomingTransactions = _transactionDummyData.FindAll(t => t.TransactionType == TransactionType.INCOMING);
+            return incomingTransactions;
         }
 
         public List<Transaction> GetAllTransactionsThatAreOutgoing()
         {
-            throw new NotImplementedException();
+            var outgoingTransactions = _transactionDummyData.FindAll(t => t.TransactionType == TransactionType.OUTGOING);
+            return outgoingTransactions;
         }
 
         public Transaction GetSingleTransactionById(int id)
         {
-            throw new NotImplementedException();
+            var transaction = _transactionDummyData.Find(t => t.Id == id);
+            return transaction;
         }
     }
 }
