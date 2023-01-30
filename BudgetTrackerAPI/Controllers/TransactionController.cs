@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetTrackerAPI.Controllers
 {
@@ -61,6 +60,7 @@ namespace BudgetTrackerAPI.Controllers
         public async Task<ActionResult<Transaction>> GetSingleTransactionById(int id)
         {
             var result = await _transactionService.GetSingleTransactionById(id);
+            if (result == null) return BadRequest($"No transaction with an id of {id} exists");
             return Ok(result);
         }
 
@@ -75,6 +75,7 @@ namespace BudgetTrackerAPI.Controllers
         public async Task<ActionResult<List<Transaction>>> EditTransaction([FromBody]Transaction newTransaction)
         {
             var result = await _transactionService.EditTransaction(newTransaction);
+            if (result == null) return BadRequest($"No transaction with an id of {newTransaction.Id} exists");
             return Ok(result);
         }
 
@@ -82,6 +83,7 @@ namespace BudgetTrackerAPI.Controllers
         public async Task<ActionResult<List<Transaction>>> DeleteTransaction(int id)
         {
             var result = await _transactionService.DeleteTransaction(id);
+            if (result == null) return BadRequest($"No transaction with an id of {id} exists");
             return Ok(result);
         }
     }
