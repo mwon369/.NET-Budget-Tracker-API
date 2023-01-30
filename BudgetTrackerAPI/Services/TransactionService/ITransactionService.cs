@@ -14,6 +14,5 @@ namespace BudgetTrackerAPI.Services.TransactionService
         List<Transaction> AddTransaction(Transaction transactionToAdd);
         List<Transaction> EditTransaction(Transaction newTransaction);
         List<Transaction> DeleteTransaction(int id);
-
     }
 }
