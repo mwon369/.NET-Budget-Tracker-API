@@ -1,6 +1,8 @@
 global using BudgetTrackerAPI.Models;
 global using BudgetTrackerAPI.Enums;
+global using BudgetTrackerAPI.Data;
 global using BudgetTrackerAPI.Services.TransactionService;
+global using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddDbContext<DataContext>();
 
 var app = builder.Build();
 
