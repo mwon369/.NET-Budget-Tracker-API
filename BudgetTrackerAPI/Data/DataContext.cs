@@ -2,6 +2,8 @@
 {
     public class DataContext : DbContext
     {
+        public DbSet<Transaction> Transactions { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
 
@@ -12,7 +14,5 @@
             base.OnConfiguring(optionsBuilder);
             optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=transactiondb;Trusted_Connection=True;TrustServerCertificate=True;");
         }
-
-        public DbSet<Transaction> Transactions { get; set; }
     }
 }

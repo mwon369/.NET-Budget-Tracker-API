@@ -2,7 +2,7 @@
 
 namespace BudgetTrackerAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/transactions")]
     [ApiController]
     public class TransactionController : ControllerBase
     {
@@ -13,50 +13,26 @@ namespace BudgetTrackerAPI.Controllers
             _transactionService = transactionService;
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet("all")]
         public async Task<ActionResult<List<Transaction>>> GetAllTransactions()
         {
             var result = await _transactionService.GetAllTransactions();
             return Ok(result);
         }
 
-        [HttpGet("GetAll/FilterByAmount")]
-        public async Task<ActionResult<List<Transaction>>> GetAllTransactionsFilteredByAmount(decimal minValue=0, decimal maxValue=999999999999999)
+        [HttpGet("all/by-details")]
+        public async Task<ActionResult<List<Transaction>>> GetAllTransactionsFilteredByDetails(TransactionType? transactionType = null,
+                                                                                      decimal minValue = 0, 
+                                                                                      decimal? maxValue = null,
+                                                                                      string startDate = "", 
+                                                                                      string endDate = "",
+                                                                                      string description = "")
         {
-            var result = await _transactionService.GetAllTransactionsFilteredByAmount(minValue, maxValue);
+            var result = await _transactionService.GetAllTransactionsFilteredByDetails(transactionType, minValue, maxValue, startDate, endDate, description);
             return Ok(result);
         }
 
-        [HttpGet("GetAll/FilterByDate")]
-        public async Task<ActionResult<List<Transaction>>> GetAllTransactionsFilteredByDate(string startDate="", string endDate="")
-        {
-            var result = await _transactionService.GetAllTransactionsFilteredByDate(startDate, endDate);
-            if (result == null) return BadRequest("Please specify at least either a start date or end date");
-            return Ok(result);
-        }
-
-        [HttpGet("GetAll/FilterIncoming")]
-        public async Task<ActionResult<List<Transaction>>> GetAllTransactionsThatAreIncoming()
-        {
-            var result = await _transactionService.GetAllTransactionsThatAreIncoming();
-            return Ok(result);
-        }
-
-        [HttpGet("GetAll/FilterOutgoing")]
-        public async Task<ActionResult<List<Transaction>>> GetAllTransactionsThatAreOutgoing()
-        {
-            var result = await _transactionService.GetAllTransactionsThatAreOutgoing();
-            return Ok(result);
-        }
-
-        [HttpGet("GetAll/FilterByDescription/{description}")]
-        public async Task<ActionResult<List<Transaction>>> GetAllTransactionsContainingDescription(string description)
-        {
-            var result = await _transactionService.GetAllTransactionsContainingDescription(description);
-            return Ok(result);
-        }
-
-        [HttpGet("FilterById/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Transaction>> GetSingleTransactionById(int id)
         {
             var result = await _transactionService.GetSingleTransactionById(id);
@@ -64,14 +40,14 @@ namespace BudgetTrackerAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost("AddTransaction")]
+        [HttpPost]
         public async Task<ActionResult<List<Transaction>>> AddTransaction([FromBody]Transaction transactionToAdd)
         {
             var result = await _transactionService.AddTransaction(transactionToAdd);
             return Ok(result);
         }
 
-        [HttpPut("EditTransaction")]
+        [HttpPut]
         public async Task<ActionResult<List<Transaction>>> EditTransaction([FromBody]Transaction newTransaction)
         {
             var result = await _transactionService.EditTransaction(newTransaction);
@@ -79,7 +55,7 @@ namespace BudgetTrackerAPI.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("DeleteTransaction/{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<List<Transaction>>> DeleteTransaction(int id)
         {
             var result = await _transactionService.DeleteTransaction(id);
