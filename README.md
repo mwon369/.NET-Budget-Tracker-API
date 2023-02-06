@@ -3,7 +3,7 @@ A web API project used to track and handle personal financial transaction data. 
 
 ### Overview of API endpoints & example uses:
 
-![Overview](https://user-images.githubusercontent.com/100281768/215394175-e7095abe-38d2-49d4-8157-c9af5558c9d2.PNG)
-![GetAll](https://user-images.githubusercontent.com/100281768/215394185-a073c010-7caf-416a-9808-e03d65567b44.PNG)
-![GetAllFilterAmount](https://user-images.githubusercontent.com/100281768/215394190-65ecdd68-dc3a-4310-bba5-1e7af6ac0bcf.PNG)
-![PutUpdate](https://user-images.githubusercontent.com/100281768/215394198-2de81285-39f2-4ab2-a372-c4b524342745.PNG)
+![Endpoints](https://user-images.githubusercontent.com/100281768/216949246-ab3c4cef-3ca8-4bcd-a583-bcf921a5caa4.PNG)
+![GetAll](https://user-images.githubusercontent.com/100281768/216949257-a2906e9d-0771-4353-a5c8-04e6af638066.PNG)
+![GetAllFiltered](https://user-images.githubusercontent.com/100281768/216949265-3644b383-9a50-4eec-8596-0f55e2aa53b0.PNG)
+![PutRequest](https://user-images.githubusercontent.com/100281768/216949278-22150b79-09f1-443a-880b-7cc2653ba7eb.PNG)
