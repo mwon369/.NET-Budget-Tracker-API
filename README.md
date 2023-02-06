@@ -1,5 +1,5 @@
 # .NET-Budget-Tracker-API
-A web API project used to track and handle personal financial transaction data. Created with ASP.NET Core, EntityFramework and SQLServer.
+A web API project used to track and handle personal financial transaction data. Created with ASP.NET Core, EntityFramework and SQL Server.
 
 ### Overview of API endpoints & example uses:
 
