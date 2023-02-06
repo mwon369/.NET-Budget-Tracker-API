@@ -9,8 +9,10 @@
             _context = context;
         }
 
-        public async Task<List<Transaction>> AddTransaction(Transaction transactionToAdd)
+        public async Task<List<Transaction>?> AddTransaction(Transaction transactionToAdd)
         {
+            if (transactionToAdd.Value < 0) return null;
+
             _context.Transactions.Add(transactionToAdd);
             await _context.SaveChangesAsync();
             return await _context.Transactions.ToListAsync();
@@ -50,14 +52,16 @@
         public async Task<List<Transaction>> GetAllTransactionsFilteredByDetails(TransactionType? transactionType, decimal minValue, decimal? maxValue, string startDate, string endDate, string description)
         {
             var transactionsToReturn = _context.Transactions.Where(t => transactionType == null || t.TransactionType == transactionType)
-                                                            .Where(t => maxValue == null || t.Value >= minValue && t.Value <= maxValue)
-                                                            .Where(t => startDate == "" && endDate == "" ||
-                                                                        startDate == "" && t.Date <= DateTime.Parse(endDate) ||
-                                                                        endDate == "" && t.Date >= DateTime.Parse(startDate) ||
-                                                                        t.Date >= DateTime.Parse(startDate) && t.Date <= DateTime.Parse(endDate))
+                                                            .Where(t => maxValue == null && t.Value >= minValue || t.Value >= minValue && t.Value <= maxValue)
                                                             .Where(t => t.Description.ToLower().Contains(description.ToLower()));
 
-            return await transactionsToReturn.ToListAsync();
+            if (startDate != "" && endDate != "") return await transactionsToReturn.Where(t => t.Date >= DateTime.Parse(startDate) && t.Date <= DateTime.Parse(endDate)).ToListAsync();
+
+            else if (startDate != "" && endDate == "") return await transactionsToReturn.Where(t => t.Date >= DateTime.Parse(startDate)).ToListAsync();
+
+            else if (startDate == "" && endDate != "") return await transactionsToReturn.Where(t => t.Date <= DateTime.Parse(endDate)).ToListAsync();
+
+            else return await transactionsToReturn.ToListAsync();
         }
 
         public async Task<Transaction?> GetSingleTransactionById(int id)

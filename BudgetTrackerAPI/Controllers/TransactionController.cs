@@ -44,6 +44,7 @@ namespace BudgetTrackerAPI.Controllers
         public async Task<ActionResult<List<Transaction>>> AddTransaction([FromBody]Transaction transactionToAdd)
         {
             var result = await _transactionService.AddTransaction(transactionToAdd);
+            if (result == null) return BadRequest("Transactions cannot have a value below 0");
             return Ok(result);
         }
 
